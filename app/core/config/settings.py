@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import Field, field_validator
+from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -22,12 +22,12 @@ class Settings(BaseSettings):
     DEBUG: bool = Field(default=False)
 
     DATABASE_URL: str
+    DATABASE_PUBLIC_URL: str | None = Field(default=None)
 
     SECRET_KEY: str
     ALGORITHM: str = Field(default="HS256")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(default=30)
 
-    # Comma-separated origins, e.g. http://localhost:5173,http://127.0.0.1:5173
     CORS_ORIGINS: str = Field(
         default="http://localhost:5173,http://127.0.0.1:5173"
     )
@@ -43,6 +43,19 @@ class Settings(BaseSettings):
     @classmethod
     def normalize_database_url(cls, value: str) -> str:
         return to_asyncpg_url(str(value))
+
+    @field_validator("DATABASE_PUBLIC_URL", mode="before")
+    @classmethod
+    def normalize_public_url(cls, value: str | None) -> str | None:
+        if value is None or str(value).strip() == "":
+            return None
+        return to_asyncpg_url(str(value))
+
+    @model_validator(mode="after")
+    def prefer_public_database_url(self):
+        if self.DATABASE_PUBLIC_URL:
+            self.DATABASE_URL = to_asyncpg_url(self.DATABASE_PUBLIC_URL)
+        return self
 
     @property
     def cors_origins_list(self) -> list[str]:

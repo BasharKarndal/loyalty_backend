@@ -4,7 +4,7 @@ builder = "nixpacks"
 [deploy]
 startCommand = "uvicorn app.main:app --host 0.0.0.0 --port $PORT"
 releaseCommand = "alembic upgrade head && python scripts/seed_super_admin.py"
-healthcheckPath = "/health"
+healthcheckPath = "/"
 healthcheckTimeout = 30
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 5
