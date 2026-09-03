@@ -59,11 +59,15 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins_list(self) -> list[str]:
-        return [
-            origin.strip()
-            for origin in self.CORS_ORIGINS.split(",")
-            if origin.strip()
-        ]
+        origins: list[str] = []
+        for raw in self.CORS_ORIGINS.split(","):
+            origin = raw.strip().rstrip("/")
+            if not origin:
+                continue
+            if not origin.startswith(("http://", "https://")):
+                origin = f"https://{origin}"
+            origins.append(origin)
+        return origins
 
 
 @lru_cache
