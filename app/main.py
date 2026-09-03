@@ -1,4 +1,5 @@
 from fastapi import Depends, FastAPI
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -62,8 +63,11 @@ async def health(session: AsyncSession = Depends(get_session)):
     }
     if db_ok:
         return ResponseBuilder.success(data=payload, message="Healthy")
-    return ResponseBuilder.failure(
-        message="Database unavailable",
+    return JSONResponse(
         status_code=503,
-        errors=["DATABASE_DOWN"],
+        content=ResponseBuilder.failure(
+            message="Database unavailable",
+            status_code=503,
+            errors=["DATABASE_DOWN"],
+        ).model_dump(),
     )
