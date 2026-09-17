@@ -67,6 +67,7 @@ class UpdatePurchaseHandler:
         purchase.update(
             amount=command.amount,
             points_earned=new_points,
+            product_type=command.product_type,
             notes=command.notes,
             updated_at=now,
         )

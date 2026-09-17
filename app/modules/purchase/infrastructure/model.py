@@ -32,6 +32,8 @@ class PurchaseModel(Base):
 
     points_earned: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
+    product_type: Mapped[str | None] = mapped_column(String(120), nullable=True)
+
     notes: Mapped[str | None] = mapped_column(String(500), nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(

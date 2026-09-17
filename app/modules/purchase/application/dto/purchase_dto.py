@@ -10,6 +10,7 @@ class PurchaseDto(BaseModel):
     customer_id: UUID
     amount: Decimal
     points_earned: int
+    product_type: str | None = None
     notes: str | None = None
     created_at: datetime
     updated_at: datetime

@@ -11,7 +11,6 @@ ALLOWED_LOGO_TYPES = {
     "image/webp": ".webp",
     "image/gif": ".gif",
 }
-MAX_LOGO_BYTES = 2 * 1024 * 1024
 
 
 def uploads_root() -> Path:
@@ -53,12 +52,6 @@ async def save_user_logo(user_id: UUID, file: UploadFile) -> str:
         )
 
     data = await file.read()
-    if len(data) > MAX_LOGO_BYTES:
-        raise AppException(
-            message="Logo file is too large (max 2 MB).",
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            errors=["LOGO_TOO_LARGE"],
-        )
 
     relative = logo_relative_path(user_id, extension)
     absolute = logo_dir() / f"{user_id}{extension}"

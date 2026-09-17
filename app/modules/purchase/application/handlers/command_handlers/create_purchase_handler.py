@@ -40,7 +40,8 @@ class CreatePurchaseHandler:
             customer_id=command.customer_id,
             amount=command.amount,
             points_earned=points_earned,
-            notes=command.notes.strip() if command.notes and command.notes.strip() else None,
+            product_type=command.product_type,
+            notes=command.notes,
             created_at=now,
             updated_at=now,
         )

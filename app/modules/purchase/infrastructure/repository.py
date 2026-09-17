@@ -29,6 +29,7 @@ class SqlAlchemyPurchaseRepository(PurchaseRepository):
 
         model.amount = purchase.amount
         model.points_earned = purchase.points_earned
+        model.product_type = purchase.product_type
         model.notes = purchase.notes
         model.updated_at = purchase.updated_at
 
