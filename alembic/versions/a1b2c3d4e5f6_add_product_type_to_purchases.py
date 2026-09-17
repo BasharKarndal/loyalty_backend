@@ -18,9 +18,10 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.add_column(
-        "purchases",
-        sa.Column("product_type", sa.String(length=120), nullable=True),
+    op.execute(
+        sa.text(
+            "ALTER TABLE purchases ADD COLUMN IF NOT EXISTS product_type VARCHAR(120)"
+        )
     )
 
 

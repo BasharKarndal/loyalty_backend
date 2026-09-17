@@ -1,10 +1,14 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.core.database import model as _models  # noqa: F401 — register ORM mappers
+from app.core.database.engine import engine
 from app.core.database.health import database_health_check
+from app.core.database.schema_ensure import ensure_schema_patches
 from app.core.database.session import AsyncSessionLocal
 from app.core.exceptions import register_exception_handlers
 from app.core.logging import setup_logging
@@ -14,9 +18,17 @@ from app.shared.routers import api_router
 
 setup_logging()
 
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    await ensure_schema_patches(engine)
+    yield
+
+
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
+    lifespan=lifespan,
     description=(
         "Clean Architecture + Modular bounded contexts. "
         "Stack: FastAPI, SQLAlchemy 2 Async, PostgreSQL, Alembic, Pydantic v2, JWT."
